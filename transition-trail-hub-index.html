@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>The Transition Trail — Workshop Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A22;
+    --ink-soft:#2C4536;
+    --parchment:#F6F1E4;
+    --parchment-dim:#EEE7D4;
+    --gold:#C68A33;
+    --gold-soft:#E7C998;
+    --clay:#B14B32;
+    --line:#D8CFB5;
+    --ink-on-parchment:#22301F;
+    --max:680px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--parchment);
+    color:var(--ink-on-parchment);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  h1,h2,h3{font-family:'Fraunces',serif; margin:0 0 .4em 0; color:var(--ink);}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-weight:600;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(198,138,51,0.25), transparent 55%),
+      var(--ink);
+    color:var(--parchment);
+    padding:2.6rem 1.4rem 2.2rem;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:0; height:48px;
+    background:
+      linear-gradient(transparent, transparent),
+      repeating-linear-gradient(90deg, transparent 0 38px, rgba(246,241,228,0.07) 38px 39px);
+    pointer-events:none;
+  }
+  .hero .eyebrow{color:var(--gold-soft);}
+  .hero h1{
+    color:var(--parchment);
+    font-size:clamp(1.7rem,6vw,2.3rem);
+    font-weight:600;
+    margin-top:.3rem;
+    max-width:18ch;
+  }
+  .hero p{
+    color:#CFC8B4;
+    max-width:46ch;
+    font-size:.96rem;
+  }
+
+  /* ---------- TRAIL NAV (sticky) ---------- */
+  .trailnav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(246,241,228,0.96);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    padding:.55rem .8rem;
+    display:flex;
+    gap:.4rem;
+  }
+  .trailnav button{
+    flex:1;
+    appearance:none; border:none; background:transparent;
+    font-family:'JetBrains Mono',monospace;
+    font-size:.68rem;
+    letter-spacing:.04em;
+    color:var(--ink-soft);
+    padding:.5rem .3rem;
+    border-radius:8px;
+    text-align:center;
+    cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:.25rem;
+  }
+  .trailnav button .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--line);
+    transition:background .2s, transform .2s;
+  }
+  .trailnav button.active{color:var(--ink); font-weight:700;}
+  .trailnav button.active .dot{background:var(--gold); transform:scale(1.25);}
+  .trailnav button.done .dot{background:var(--ink-soft);}
+
+  /* ---------- STATIONS ---------- */
+  main{max-width:var(--max); margin:0 auto; padding:0 1.1rem;}
+  .station{
+    padding:2.4rem 0 1.2rem;
+    border-left:2px dashed var(--line);
+    margin-left:10px;
+    padding-left:1.4rem;
+    position:relative;
+    scroll-margin-top:64px;
+  }
+  .station:last-child{border-left:2px dashed transparent;}
+  .marker{
+    position:absolute; left:-13px; top:2.5rem;
+    width:24px; height:24px; border-radius:50%;
+    background:var(--parchment);
+    border:2px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:.7rem; font-weight:700; color:var(--ink);
+  }
+  .station h2{font-size:1.4rem; margin-top:.6rem;}
+  .station .sub{color:var(--ink-soft); font-size:.92rem; max-width:50ch; margin-bottom:1.2rem;}
+
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:1.1rem 1.1rem 1.2rem;
+    margin-bottom:1rem;
+  }
+  .card h3{font-size:.98rem; font-family:'Inter',sans-serif; font-weight:700; margin-bottom:.5rem; color:var(--ink);}
+  .card .hint{font-size:.82rem; color:#5b6b5f; margin-bottom:.7rem;}
+
+  label{display:block; font-size:.82rem; font-weight:600; margin:.7rem 0 .3rem; color:var(--ink-soft);}
+  input[type=text], textarea, select{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:.95rem;
+    padding:.6rem .7rem;
+    border:1px solid var(--line);
+    border-radius:9px;
+    background:var(--parchment-dim);
+    color:var(--ink-on-parchment);
+    resize:vertical;
+  }
+  input[type=text]:focus, textarea:focus, select:focus{
+    outline:2px solid var(--gold);
+    outline-offset:1px;
+    background:#fff;
+  }
+  textarea{min-height:64px;}
+
+  .ai-card{
+    border:1px solid var(--gold-soft);
+    background:#FBF6EA;
+    border-radius:11px;
+    padding:.8rem .9rem;
+    margin-bottom:.6rem;
+    font-size:.88rem;
+  }
+  .ai-card .who{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.66rem; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--gold); font-weight:700; margin-bottom:.3rem; display:block;
+  }
+
+  .lens-grid{display:grid; gap:.7rem;}
+  .lens-q{
+    border-left:3px solid var(--gold);
+    padding:.3rem 0 .3rem .7rem;
+  }
+  .lens-q .tag{
+    font-family:'JetBrains Mono',monospace; font-size:.65rem;
+    color:var(--clay); text-transform:uppercase; letter-spacing:.05em;
+  }
+
+  button.primary{
+    appearance:none; border:none; cursor:pointer;
+    background:var(--ink);
+    color:var(--parchment);
+    font-family:'Inter',sans-serif; font-weight:600; font-size:.9rem;
+    padding:.75rem 1.1rem;
+    border-radius:10px;
+    width:100%;
+    margin-top:.4rem;
+    transition:background .15s, transform .1s;
+  }
+  button.primary:active{transform:scale(.98);}
+  button.primary:hover{background:var(--ink-soft);}
+  button.primary:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+
+  .status{
+    font-size:.82rem;
+    margin-top:.5rem;
+    padding:.55rem .7rem;
+    border-radius:8px;
+    display:none;
+  }
+  .status.show{display:block;}
+  .status.ok{background:#E7F0E3; color:#2C4D24; border:1px solid #BFD9B6;}
+  .status.fallback{background:#FBF0E2; color:#7A4A14; border:1px solid #ECC98C;}
+
+  footer{
+    max-width:var(--max); margin:0 auto;
+    padding:1.4rem 1.1rem 3rem;
+    color:#6b6353; font-size:.78rem;
+  }
+  footer a{text-decoration:underline; color:var(--ink-soft);}
+
+  .reveal{opacity:0; transform:translateY(8px); animation:rise .5s ease forwards;}
+  @keyframes rise{to{opacity:1; transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">Landmark College &middot; Educator Workshop</div>
+  <h1>The Transition Trail</h1>
+  <p>Three stops, one student. Work it out with the people near you — in person, on your own phone. Nothing here needs a printout.</p>
+</header>
+
+<nav class="trailnav" id="trailnav">
+  <button data-target="station-1" class="active"><span class="dot"></span>1 · Profile</button>
+  <button data-target="station-2"><span class="dot"></span>2 · Redesign</button>
+  <button data-target="station-3"><span class="dot"></span>3 · Launch</button>
+</nav>
+
+<main>
+
+  <!-- STATION 1 -->
+  <section class="station" id="station-1">
+    <div class="marker">1</div>
+    <span class="eyebrow">Stop one</span>
+    <h2>Build the strength-based profile</h2>
+    <p class="sub">With the 3–5 people around you: read the case below, then fill this out together as one profile. One phone per pod is plenty — pick whoever's screen is least cracked.</p>
+
+    <div class="card">
+      <h3>The case</h3>
+      <p class="hint">Jordan, 19, is finishing a transition program. Strong visual-spatial reasoning, hyperfocuses on systems and how things fit together, finds open-ended verbal prompts overwhelming, communicates more reliably in writing than aloud, has been told for years what they struggle with and rarely what they're good at.</p>
+    </div>
+
+    <div class="card">
+      <h3>Profile — fill in as a pod</h3>
+      <label for="strengths">Strengths &amp; interests</label>
+      <textarea id="strengths" placeholder="What does Jordan do well, or lose track of time doing?"></textarea>
+
+      <label for="regulation">Regulation needs</label>
+      <textarea id="regulation" placeholder="What helps Jordan stay settled? What tips things over?"></textarea>
+
+      <label for="communication">Communication preferences</label>
+      <textarea id="communication" placeholder="How does Jordan best receive and give information?"></textarea>
+    </div>
+
+    <div class="card">
+      <h3>Now — see what AI suggested for Jordan</h3>
+      <p class="hint">Three AI-generated suggestions, prepared ahead of time. Compare them to the profile your pod just wrote.</p>
+
+      <div class="ai-card">
+        <span class="who">Suggestion A</span>
+        Break the final project into a visual flowchart Jordan builds first, before any written component is required.
+      </div>
+      <div class="ai-card">
+        <span class="who">Suggestion B</span>
+        Replace the in-class verbal presentation with a recorded walkthrough Jordan can script and edit in advance.
+      </div>
+      <div class="ai-card">
+        <span class="who">Suggestion C</span>
+        Pair Jordan with a peer for "verbal processing" during open-ended discussion segments.
+      </div>
+
+      <label for="ai-critique">Where did AI get it right — or flatten something your profile knew?</label>
+      <textarea id="ai-critique" placeholder="E.g. Suggestion C assumes Jordan wants a peer in the moment — our profile says writing is more reliable than live talk, so this might add pressure, not reduce it."></textarea>
+
+      <button class="primary" onclick="submitStation(1)">Save our pod's profile</button>
+      <div class="status" id="status-1"></div>
+    </div>
+  </section>
+
+  <!-- STATION 2 -->
+  <section class="station" id="station-2">
+    <div class="marker">2</div>
+    <span class="eyebrow">Stop two</span>
+    <h2>Redesign sprint</h2>
+    <p class="sub">Same pod. Work through all four lenses below together — don't split them up, the friction between them is the point. Then redesign one piece of a course around Jordan's profile.</p>
+
+    <div class="card">
+      <h3>Four lenses — talk through each</h3>
+      <div class="lens-grid">
+        <div class="lens-q"><span class="tag">Big picture</span><p>If we threw out the current format entirely, what would this assignment look like built around Jordan from scratch?</p></div>
+        <div class="lens-q"><span class="tag">Detail check</span><p>What's the specific moment in the current version where Jordan would most likely get stuck or shut down?</p></div>
+        <div class="lens-q"><span class="tag">Synthesis</span><p>Of everything said so far, what's the one change that matters most?</p></div>
+        <div class="lens-q"><span class="tag">Communication</span><p>How will we describe this redesign to a colleague in two sentences?</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Redesign — fill in as a pod</h3>
+      <label for="redesign-element">What are you redesigning?</label>
+      <input type="text" id="redesign-element" placeholder="e.g. the final project presentation">
+
+      <label for="redesign-change">What changes, specifically?</label>
+      <textarea id="redesign-change" placeholder="Describe the redesigned version"></textarea>
+
+      <label for="assistive-tech">One assistive technology you're integrating</label>
+      <input type="text" id="assistive-tech" placeholder="e.g. text-to-speech, visual scheduling app, screen recording tool">
+
+      <label for="autonomy-case">Why does it add autonomy, instead of dependency or overwhelm?</label>
+      <textarea id="autonomy-case" placeholder="Be honest about the risk, not just the upside"></textarea>
+
+      <button class="primary" onclick="submitStation(2)">Save our pod's redesign</button>
+      <div class="status" id="status-2"></div>
+    </div>
+  </section>
+
+  <!-- STATION 3 -->
+  <section class="station" id="station-3">
+    <div class="marker">3</div>
+    <span class="eyebrow">Stop three</span>
+    <h2>Commit &amp; launch</h2>
+    <p class="sub">On your own now. Take your idea — or your pod's — and adapt it to your actual classroom. One page, ready for Monday.</p>
+
+    <div class="card">
+      <h3>Your launch plan</h3>
+      <label for="launch-what">What is it?</label>
+      <textarea id="launch-what" placeholder="One sentence: the policy, practice, or assignment change"></textarea>
+
+      <label for="launch-changes">What changes for the student?</label>
+      <textarea id="launch-changes" placeholder="Be concrete"></textarea>
+
+      <label for="launch-risk">What could go wrong?</label>
+      <textarea id="launch-risk" placeholder="Name the real risk, not a token one"></textarea>
+
+      <label for="launch-step">Your first step — by when?</label>
+      <input type="text" id="launch-step" placeholder="e.g. Email department chair by Friday">
+
+      <button class="primary" onclick="submitStation(3)">Save my launch plan</button>
+      <div class="status" id="status-3"></div>
+    </div>
+
+    <div class="card">
+      <h3>Pair pushback</h3>
+      <p class="hint">Swap with the person next to you. Give one piece of honest, specific pushback on their plan.</p>
+      <textarea id="pushback" placeholder="What's the one thing you'd push back on?"></textarea>
+    </div>
+
+    <div class="card">
+      <h3>Before you go</h3>
+      <p class="hint" style="font-size:.92rem;">What did today change about how you'll listen to a struggling student?</p>
+      <textarea id="reflection" placeholder="A sentence is enough"></textarea>
+      <button class="primary" onclick="submitStation('reflection')">Save my reflection</button>
+      <div class="status" id="status-reflection"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  This page stays live after the workshop — bookmark it to revisit your plan.
+  Built for <a href="#station-1">The Transition Trail</a>, June 2026.
+</footer>
+
+<script>
+  // ---- CONFIG: plug in a submission endpoint here once it exists ----
+  // Leave SUBMIT_URL empty to run in "local confirm" mode (no backend needed).
+  // To wire to a Google Form, set SUBMIT_URL to the form's formResponse URL
+  // and map each field id below to its corresponding entry.### id.
+  const SUBMIT_URL = ""; // e.g. "https://docs.google.com/forms/d/e/FORM_ID/formResponse"
+  const FIELD_MAP = {
+    // local id : google form entry id
+    // "strengths": "entry.111111111",
+  };
+
+  function collect(ids){
+    const data = {};
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value.trim();
+    });
+    return data;
+  }
+
+  async function submitStation(n){
+    const fieldSets = {
+      1: ["strengths","regulation","communication","ai-critique"],
+      2: ["redesign-element","redesign-change","assistive-tech","autonomy-case"],
+      3: ["launch-what","launch-changes","launch-risk","launch-step"],
+      "reflection": ["reflection"]
+    };
+    const ids = fieldSets[n];
+    const data = collect(ids);
+    const statusEl = document.getElementById("status-" + n);
+
+    if (SUBMIT_URL) {
+      try {
+        const params = new URLSearchParams();
+        ids.forEach(id => {
+          if (FIELD_MAP[id]) params.append(FIELD_MAP[id], data[id] || "");
+        });
+        await fetch(SUBMIT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {"Content-Type":"application/x-www-form-urlencoded"},
+          body: params.toString()
+        });
+        statusEl.textContent = "Saved — thanks!";
+        statusEl.className = "status show ok";
+      } catch (e) {
+        statusEl.textContent = "Couldn't reach the server. Your answers are still on this screen — screenshot them as backup.";
+        statusEl.className = "status show fallback";
+      }
+    } else {
+      statusEl.textContent = "Got it — your response is captured on this device for now. (Facilitator: connect SUBMIT_URL to collect these centrally.)";
+      statusEl.className = "status show fallback";
+    }
+    markDone(n);
+  }
+
+  function markDone(n){
+    const map = {1:"station-1", 2:"station-2", 3:"station-3", "reflection":"station-3"};
+    const btn = document.querySelector(`.trailnav button[data-target="${map[n]}"]`);
+    if (btn) btn.classList.add("done");
+  }
+
+  // nav scroll + active state
+  const navButtons = document.querySelectorAll(".trailnav button");
+  navButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.getElementById(btn.dataset.target).scrollIntoView({behavior:"smooth", block:"start"});
+    });
+  });
+
+  const sections = document.querySelectorAll(".station");
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navButtons.forEach(b => b.classList.remove("active"));
+        const match = document.querySelector(`.trailnav button[data-target="${entry.target.id}"]`);
+        if (match) match.classList.add("active");
+      }
+    });
+  }, {rootMargin: "-40% 0px -50% 0px"});
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
